@@ -2,9 +2,8 @@
 // Main screen — composes all dashboard components and manages modal + day selection state.
 
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useChallengeContext } from '../context/ChallengeContext';
-import { FloatingParticles } from '../components/ui/FloatingParticles';
 
 // Dashboard components
 import { TodayCard } from '../components/dashboard/TodayCard';
@@ -32,27 +31,15 @@ export function DashboardScreen() {
     } = useChallengeContext();
 
     const navigate = useNavigate();
-    const location = useLocation();
     const topRef = useRef(null);
-
-    // If they came from WelcomeScreen (registration), they already saw a loading screen
-    const [isAppLoading, setIsAppLoading] = useState(!location.state?.fromLogin);
 
     // Selected day — defaults to currentDay
     const [selectedDay, setSelectedDay] = useState(currentDay);
 
-    // Show loading screen for 1.5s if it's a fresh visit to the Dashboard
+    // Ensure page starts at the top when navigating from WelcomeScreen
     useEffect(() => {
-        if (isAppLoading) {
-            const timer = setTimeout(() => {
-                setIsAppLoading(false);
-                window.scrollTo(0, 0); // scroll to top when complete
-            }, 1800);
-            return () => clearTimeout(timer);
-        } else {
-            window.scrollTo(0, 0);
-        }
-    }, [isAppLoading]);
+        window.scrollTo(0, 0);
+    }, []);
 
     // Sync selected day if the actual current challenge day rolls over
     useEffect(() => {
@@ -95,19 +82,6 @@ export function DashboardScreen() {
             navigate('/', { replace: true });
         }
     }, [resetChallenge, navigate]);
-
-    if (isAppLoading) {
-        return (
-            <div className="welcome-bg">
-                <FloatingParticles count={20} />
-                <div className="welcome-content loading-content">
-                    <div className="lotus-icon">🪷</div>
-                    <h2 className="loading-title fade-in delay-1">Reconnecting...</h2>
-                    <p className="loading-subtitle fade-in delay-2">Taking a deep breath</p>
-                </div>
-            </div>
-        );
-    }
 
     return (
         <div className="dashboard-bg">
