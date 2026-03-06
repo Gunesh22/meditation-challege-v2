@@ -48,7 +48,35 @@ export function useChallenge() {
 
     // --- Register ---
     const register = useCallback(async (name, email, phone) => {
-        // 1. localStorage (instant)
+        try {
+            // Wait for Firestore to create a new user OR return an existing one
+            // We can do this because WelcomeScreen has a 2.5s loading animation anyway
+            const remoteUser = await firestore.registerParticipant({
+                name,
+                email,
+                phone,
+                startDate: getTodayISO(),
+            });
+
+            if (remoteUser) {
+                const merged = {
+                    ...state,
+                    registered: true,
+                    name: remoteUser.name || name,
+                    email: remoteUser.email || email,
+                    phone: remoteUser.phone || phone,
+                    startDate: remoteUser.startDate || getTodayISO(),
+                    completedDays: remoteUser.completedDays || {},
+                    reflections: remoteUser.reflections || {},
+                };
+                persist(merged);
+                return;
+            }
+        } catch (err) {
+            console.warn('[Firestore] Register failed, using local tracking', err);
+        }
+
+        // Fallback (Offline mode)
         const next = {
             ...state,
             registered: true,
@@ -58,14 +86,6 @@ export function useChallenge() {
             startDate: getTodayISO(),
         };
         persist(next);
-
-        // 2. Firestore (async, 1 retry)
-        firestore.registerParticipant({
-            name,
-            email,
-            phone,
-            startDate: getTodayISO(),
-        });
     }, [state, persist]);
 
     // --- Complete a day ---

@@ -45,7 +45,7 @@ export function WelcomeScreen() {
         // Simulate a calming delay for the preparation screen
         setTimeout(() => {
             register(name.trim(), email.trim(), phone.trim());
-            navigate('/dashboard', { replace: true });
+            navigate('/dashboard', { replace: true, state: { fromLogin: true } });
         }, 2500);
     }, [name, email, phone, register, navigate]);
 

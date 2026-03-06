@@ -51,9 +51,17 @@ async function withRetry(fn) {
 export async function registerParticipant({ name, email, phone, startDate }) {
     const docId = sanitizePhone(phone);
 
-    await withRetry(async () => {
+    return await withRetry(async () => {
         const docRef = doc(db, PARTICIPANTS, docId);
-        await setDoc(docRef, {
+        const snap = await getDoc(docRef);
+
+        if (snap.exists()) {
+            // Already registered — return their existing data
+            return { id: docId, ...snap.data() };
+        }
+
+        // New user — create document
+        const newData = {
             name,
             email,
             phone,
@@ -61,7 +69,9 @@ export async function registerParticipant({ name, email, phone, startDate }) {
             completedDays: {},
             reflections: {},
             createdAt: serverTimestamp(),
-        }, { merge: true }); // merge: true so we don't overwrite if exists
+        };
+        await setDoc(docRef, newData);
+        return { id: docId, ...newData };
     });
 }
 
