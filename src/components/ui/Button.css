@@ -1,0 +1,78 @@
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    font-family: inherit;
+    color: inherit;
+    background: none;
+}
+
+.btn:active {
+    transform: scale(0.97);
+}
+
+/* Primary */
+.btn--primary {
+    padding: 16px 24px;
+    background: linear-gradient(135deg, var(--green-700), var(--green-900));
+    color: var(--green-50);
+    border-radius: var(--radius-full);
+    box-shadow: 0 4px 20px rgba(46, 125, 50, 0.3);
+}
+
+/* Secondary */
+.btn--secondary {
+    padding: 14px 24px;
+    background: transparent;
+    color: var(--text-secondary);
+    font-weight: 500;
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-full);
+}
+
+.btn--secondary:active {
+    background: var(--bg-surface);
+}
+
+/* Ghost */
+.btn--ghost {
+    padding: 14px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Confirm */
+.btn--confirm {
+    padding: 15px;
+    background: linear-gradient(135deg, var(--green-700), var(--green-900));
+    color: var(--green-50);
+    border-radius: var(--radius-full);
+    box-shadow: 0 4px 20px rgba(46, 125, 50, 0.3);
+}
+
+/* Danger */
+.btn--danger {
+    padding: 14px;
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-full);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.btn__icon {
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+}

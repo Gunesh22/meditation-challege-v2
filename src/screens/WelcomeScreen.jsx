@@ -1,0 +1,108 @@
+// ===== WelcomeScreen =====
+// Registration screen — name + phone, then redirect to dashboard.
+
+import { useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useChallengeContext } from '../context/ChallengeContext';
+import { FloatingParticles } from '../components/ui/FloatingParticles';
+import { Button } from '../components/ui/Button';
+import { generateWelcomeCount } from '../utils/communityCount';
+import './WelcomeScreen.css';
+
+export function WelcomeScreen() {
+    const { register } = useChallengeContext();
+    const navigate = useNavigate();
+
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [phone, setPhone] = useState('');
+    const [communityCount] = useState(() => generateWelcomeCount());
+
+    const handleSubmit = useCallback((e) => {
+        e.preventDefault();
+        if (!name.trim() || !email.trim() || !phone.trim()) return;
+        register(name.trim(), email.trim(), phone.trim());
+        navigate('/dashboard', { replace: true });
+    }, [name, email, phone, register, navigate]);
+
+    return (
+        <div className="welcome-bg">
+            <FloatingParticles count={20} />
+
+            <div className="welcome-content">
+                {/* Logo */}
+                <div className="welcome-logo fade-in">
+                    <div className="lotus-icon">🪷</div>
+                    <h1 className="welcome-title">
+                        11-Day<br /><span>Meditation Challenge</span>
+                    </h1>
+                    <p className="welcome-subtitle">by TGF</p>
+                </div>
+
+                {/* Quote */}
+                <div className="welcome-quote fade-in delay-1">
+                    <p>"The thing about meditation is: you become more and more you."</p>
+                    <span>— David Lynch</span>
+                </div>
+
+                {/* Form */}
+                <form className="join-form fade-in delay-2" onSubmit={handleSubmit} autoComplete="off">
+                    <div className="form-group">
+                        <label htmlFor="user-name">Your Name</label>
+                        <input
+                            id="user-name"
+                            type="text"
+                            placeholder="Enter your name"
+                            required
+                            minLength={2}
+                            maxLength={50}
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="user-email">Email Address</label>
+                        <input
+                            id="user-email"
+                            type="email"
+                            placeholder="Enter your email"
+                            required
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="user-phone">Phone Number</label>
+                        <input
+                            id="user-phone"
+                            type="tel"
+                            placeholder="Enter your phone number"
+                            required
+                            minLength={10}
+                            maxLength={15}
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
+                        />
+                    </div>
+                    <Button
+                        variant="primary"
+                        type="submit"
+                        icon={
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M5 12h14M12 5l7 7-7 7" />
+                            </svg>
+                        }
+                    >
+                        Begin Your Journey
+                    </Button>
+                </form>
+
+                {/* Community badge */}
+                <div className="community-badge fade-in delay-3">
+                    <div className="pulse-dot" />
+                    <span>{communityCount.toLocaleString()} seekers have joined</span>
+                </div>
+            </div>
+        </div>
+    );
+}

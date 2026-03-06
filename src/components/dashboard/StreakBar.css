@@ -1,0 +1,41 @@
+.streak-wrapper {
+    padding: 0 20px;
+    margin-top: 16px;
+}
+
+.streak-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-full);
+}
+
+.streak-bar--lost {
+    border-color: rgba(255, 183, 77, 0.15);
+}
+
+.streak-bar__icon {
+    font-size: 1.1rem;
+}
+
+.streak-bar__text {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.streak-bar__text strong {
+    color: var(--gold-400);
+    font-weight: 700;
+}
+
+.streak-message {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-style: italic;
+    text-align: center;
+    margin-top: 8px;
+}

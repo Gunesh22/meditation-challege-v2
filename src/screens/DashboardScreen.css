@@ -1,0 +1,101 @@
+.dashboard-bg {
+    min-height: 100dvh;
+    background:
+        radial-gradient(ellipse at 30% 0%, rgba(30, 90, 50, 0.15) 0%, transparent 50%),
+        var(--bg-deep);
+    padding: 0 0 40px 0;
+}
+
+/* Header */
+.dash-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 20px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(6, 14, 10, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.greeting-hello {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    display: block;
+}
+
+.greeting-name {
+    font-family: var(--font-serif);
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-top: 2px;
+}
+
+.day-badge {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    padding: 8px 16px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-full);
+}
+
+.day-badge__number {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-accent);
+    font-variant-numeric: tabular-nums;
+}
+
+.day-badge__label {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
+
+/* Footer */
+.dash-footer {
+    margin-top: 40px;
+    padding: 24px 20px;
+    text-align: center;
+    border-top: 1px solid var(--border-subtle);
+}
+
+.dash-footer p {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+}
+
+.btn-reset {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    opacity: 0.5;
+    text-decoration: underline;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.btn-reset:active {
+    opacity: 1;
+}
+
+@media (min-width: 640px) {
+    .dashboard-bg {
+        max-width: 480px;
+        margin: 0 auto;
+    }
+}
+
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+    .dash-footer {
+        padding-bottom: calc(24px + env(safe-area-inset-bottom));
+    }
+}

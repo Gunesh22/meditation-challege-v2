@@ -1,0 +1,50 @@
+.challenge-complete-banner {
+    padding: 24px 20px 0;
+}
+
+.complete-card {
+    background: linear-gradient(160deg, rgba(255, 202, 40, 0.08), rgba(46, 125, 50, 0.12));
+    border: 1px solid rgba(255, 202, 40, 0.2);
+    border-radius: var(--radius-xl);
+    padding: 28px 24px;
+    text-align: center;
+}
+
+.complete-card__icon {
+    font-size: 48px;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.complete-card h3 {
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    color: var(--gold-400);
+    margin-bottom: 8px;
+}
+
+.complete-card p {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+}
+
+.btn-view-cert {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.2), rgba(255, 179, 0, 0.1));
+    border: 1px solid rgba(255, 202, 40, 0.3);
+    color: var(--gold-400);
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: inherit;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-view-cert:active {
+    transform: scale(0.97);
+}

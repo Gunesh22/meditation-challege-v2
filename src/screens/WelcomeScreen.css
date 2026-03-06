@@ -1,0 +1,205 @@
+.welcome-bg {
+    min-height: 100dvh;
+    background:
+        radial-gradient(ellipse at 50% 0%, rgba(30, 90, 50, 0.25) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 100%, rgba(20, 70, 40, 0.2) 0%, transparent 50%),
+        var(--bg-deep);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.welcome-content {
+    width: 100%;
+    max-width: 400px;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+}
+
+/* Logo */
+.welcome-logo {
+    text-align: center;
+}
+
+.lotus-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+    animation: gentlePulse 3s ease-in-out infinite;
+}
+
+@keyframes gentlePulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.08);
+    }
+}
+
+.welcome-title {
+    font-family: var(--font-serif);
+    font-size: 2rem;
+    font-weight: 400;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+}
+
+.welcome-title span {
+    font-style: italic;
+    color: var(--text-accent);
+}
+
+.welcome-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-top: 8px;
+}
+
+/* Quote */
+.welcome-quote {
+    text-align: center;
+    padding: 0 8px;
+}
+
+.welcome-quote p {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.welcome-quote span {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    display: block;
+    margin-top: 6px;
+}
+
+/* Form */
+.join-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    letter-spacing: 0.04em;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 14px 16px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input::placeholder {
+    color: var(--text-muted);
+}
+
+.form-group input:focus {
+    border-color: var(--green-600);
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.12);
+}
+
+/* Community badge */
+.community-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 18px;
+    background: rgba(16, 42, 28, 0.65);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-full);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.pulse-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--green-400);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+        box-shadow: 0 0 0 0 rgba(102, 187, 106, 0.5);
+    }
+
+    50% {
+        opacity: 0.8;
+        box-shadow: 0 0 0 6px rgba(102, 187, 106, 0);
+    }
+}
+
+.community-badge span {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+}
+
+/* Animations */
+.fade-in {
+    opacity: 0;
+    transform: translateY(18px);
+    animation: fadeUp 0.7s ease forwards;
+}
+
+.delay-1 {
+    animation-delay: 0.15s;
+}
+
+.delay-2 {
+    animation-delay: 0.3s;
+}
+
+.delay-3 {
+    animation-delay: 0.45s;
+}
+
+@keyframes fadeUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (min-width: 640px) {
+    .welcome-title {
+        font-size: 2.5rem;
+    }
+}

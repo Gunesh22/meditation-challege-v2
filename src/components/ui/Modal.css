@@ -1,0 +1,98 @@
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-card {
+    width: 100%;
+    max-width: 440px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    padding: 32px 24px 40px;
+    transform: translateY(100%);
+    transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+    max-height: 90dvh;
+    overflow-y: auto;
+}
+
+.modal-overlay.active .modal-card {
+    transform: translateY(0);
+}
+
+.modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    color: var(--text-muted);
+    background: var(--bg-surface);
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    z-index: 1;
+    font-family: inherit;
+}
+
+.modal-icon {
+    font-size: 40px;
+    text-align: center;
+}
+
+.modal-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 16px;
+}
+
+.modal-step h3 {
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.modal-step p {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+@media (min-width: 480px) {
+    .modal-card {
+        border-radius: var(--radius-xl);
+        margin-bottom: 20px;
+    }
+
+    .modal-overlay {
+        align-items: center;
+        padding: 20px;
+    }
+}
+
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+    .modal-card {
+        padding-bottom: calc(40px + env(safe-area-inset-bottom));
+    }
+}
