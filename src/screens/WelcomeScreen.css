@@ -132,6 +132,17 @@
     box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.12);
 }
 
+.form-error {
+    background: rgba(220, 38, 38, 0.1);
+    color: #f87171;
+    padding: 12px;
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+    text-align: center;
+    border: 1px solid rgba(220, 38, 38, 0.2);
+    animation: fadeUp 0.3s ease forwards;
+}
+
 /* Community badge */
 .community-badge {
     display: flex;

@@ -17,11 +17,28 @@ export function WelcomeScreen() {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
+    const [error, setError] = useState('');
     const [communityCount] = useState(() => generateWelcomeCount());
 
     const handleSubmit = useCallback((e) => {
         e.preventDefault();
+        setError('');
+
         if (!name.trim() || !email.trim() || !phone.trim()) return;
+
+        // Basic Email Validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email.trim())) {
+            setError('Please enter a valid email address.');
+            return;
+        }
+
+        // Basic Phone Validation (Allows +, numbers, spaces, dashes, 10-15 chars)
+        const phoneRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
+        if (!phoneRegex.test(phone.trim())) {
+            setError('Please enter a valid phone number (e.g. 9876543210).');
+            return;
+        }
 
         setIsRegistering(true);
 
@@ -67,6 +84,7 @@ export function WelcomeScreen() {
 
                 {/* Form */}
                 <form className="join-form fade-in delay-2" onSubmit={handleSubmit} autoComplete="off">
+                    {error && <div className="form-error">{error}</div>}
                     <div className="form-group">
                         <label htmlFor="user-name">Your Name</label>
                         <input
