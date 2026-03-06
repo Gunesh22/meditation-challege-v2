@@ -1,37 +1,74 @@
 // ===== CertificateModal =====
 // Shows a certificate after completing all 11 days.
 
+import { useRef, useState } from 'react';
 import { useChallengeContext } from '../../context/ChallengeContext';
 import { Modal } from '../ui/Modal';
 import { Button } from '../ui/Button';
 import { formatDate } from '../../utils/dateHelpers';
+import { toBlob } from 'html-to-image';
 import './CertificateModal.css';
 
 export function CertificateModal({ isOpen, onClose }) {
     const { state } = useChallengeContext();
+    const certRef = useRef(null);
+    const [isSharing, setIsSharing] = useState(false);
 
     const handleShare = async () => {
-        const text = `🪷 I completed the TGF 11-Day Meditation Challenge!\n\n11 days of mindful practice. Grateful for this journey.\n\n#TGFMeditationChallenge #11DaysOfStillness`;
+        if (!certRef.current || isSharing) return;
 
-        if (navigator.share) {
-            try {
-                await navigator.share({ title: 'TGF Meditation Challenge — Certificate', text });
-            } catch {
-                // User cancelled share
+        setIsSharing(true);
+        const text = `🪷 I completed the Tej Gyan Foundation 11-Day Meditation Challenge!`;
+
+        try {
+            // Generate PNG Blob from the DOM
+            const blob = await toBlob(certRef.current, {
+                cacheBust: true,
+                backgroundColor: '#060e0a', // Use --bg-deep
+                style: { margin: '0' },
+            });
+
+            if (!blob) throw new Error("Could not generate image");
+
+            const file = new File([blob], 'tgf-meditation-certificate.png', { type: 'image/png' });
+
+            // Check if Web Share API supports files
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                await navigator.share({
+                    title: 'Meditation Certificate',
+                    text: text,
+                    files: [file],
+                });
+            } else {
+                // Fallback: Download the image directly
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'tgf-meditation-certificate.png';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                // Copy text as a bonus
+                try {
+                    await navigator.clipboard.writeText(text);
+                    alert('Image downloaded! Text copied to clipboard.');
+                } catch {
+                    alert('Image downloaded successfully!');
+                }
             }
-        } else {
-            try {
-                await navigator.clipboard.writeText(text);
-                alert('Copied to clipboard!');
-            } catch {
-                // Fallback
-            }
+        } catch (error) {
+            console.error('Failed to share certificate:', error);
+            alert('Sorry, there was an error generating your certificate.');
+        } finally {
+            setIsSharing(false);
         }
     };
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} className="certificate-modal">
-            <div className="certificate-wrapper">
+            <div className="certificate-wrapper" ref={certRef}>
                 <div className="cert-border">
                     <div className="cert-content">
                         <div className="cert-lotus">🪷</div>
@@ -42,17 +79,17 @@ export function CertificateModal({ isOpen, onClose }) {
                         <h3 className="cert-name">{state.name || 'Meditator'}</h3>
                         <p className="cert-body">
                             For successfully completing 11 consecutive days of mindful meditation
-                            practice as part of the TGF Meditation Challenge.
+                            practice as part of the Tej Gyan Foundation Meditation Challenge.
                         </p>
                         <div className="cert-divider" />
                         <p className="cert-date">{formatDate(new Date())}</p>
-                        <p className="cert-org">TGF — The Growth Foundation</p>
+                        <p className="cert-org">Tej Gyan Foundation</p>
                     </div>
                 </div>
             </div>
             <div className="cert-actions">
                 <Button variant="primary" onClick={handleShare}>
-                    Share Certificate
+                    {isSharing ? 'Generating...' : 'Share Certificate'}
                 </Button>
                 <Button variant="secondary" onClick={onClose}>
                     Close

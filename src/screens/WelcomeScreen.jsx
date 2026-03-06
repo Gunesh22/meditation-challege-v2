@@ -73,7 +73,7 @@ export function WelcomeScreen() {
                     <h1 className="welcome-title">
                         11-Day<br /><span>Meditation Challenge</span>
                     </h1>
-                    <p className="welcome-subtitle">by TGF</p>
+                    <p className="welcome-subtitle">by Tej Gyan Foundation</p>
                 </div>
 
                 {/* Quote */}

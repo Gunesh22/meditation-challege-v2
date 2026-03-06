@@ -127,7 +127,7 @@ export function DashboardScreen() {
 
             {/* Footer */}
             <footer className="dash-footer">
-                <p>🪷 TGF Meditation Challenge</p>
+                <p>🪷 Tej Gyan Foundation Meditation Challenge</p>
                 <button className="btn-reset" onClick={handleLogout}>
                     Logout
                 </button>
