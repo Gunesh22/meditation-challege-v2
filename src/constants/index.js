@@ -40,17 +40,17 @@ export const FEELINGS = [
 ];
 
 export const WISDOMS = [
-    "Your mind becomes quieter with every practice.",
-    "Silence is the language of the soul.",
-    "You are planting seeds of awareness.",
-    "Each breath is a fresh beginning.",
-    "The lotus blooms in muddy water. So can you.",
-    "Stillness is where creativity and solutions are found.",
-    "You're not doing nothing — you're doing the most important thing.",
-    "The quieter you become, the more you can hear.",
-    "Peace is always just one breath away.",
-    "You showed up for yourself today. That matters.",
-    "Eleven days of silence will echo for a lifetime.",
+    "Everything is a Game of Beliefs – Understanding is the whole thing",
+    "Self-stabilization is the highest achievement.",
+    "True prayer is not asking for what you want, but understanding what is.",
+    "Meditation is the art of being aware of your own beliefs.",
+    "Silence is not the absence of sound, but the presence of understanding.",
+    "Your outer world is a reflection of your inner belief system.",
+    "Understanding is the only way to lasting peace.",
+    "Be a witness to your thoughts, not a slave to them.",
+    "Every moment is an opportunity to re-evaluate your beliefs.",
+    "The truth is simple; our beliefs make it complicated.",
+    "Understanding the Self is the ultimate goal of life.",
 ];
 
 export const SESSION_TIMES = [

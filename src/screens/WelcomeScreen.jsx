@@ -95,8 +95,8 @@ export function WelcomeScreen() {
 
                 {/* Quote */}
                 <div className="welcome-quote fade-in delay-1">
-                    <p>"The thing about meditation is: you become more and more you."</p>
-                    <span>— David Lynch</span>
+                    <p>"Everything is a Game of Beliefs – Understanding is the whole thing"</p>
+                    <span>— Sirshree</span>
                 </div>
 
                 {/* Form */}
@@ -155,7 +155,7 @@ export function WelcomeScreen() {
                 {/* Community badge */}
                 <div className="community-badge fade-in delay-3">
                     <div className="pulse-dot" />
-                    <span>{communityCount > 0 ? communityCount.toLocaleString() : '...'} seekers have joined</span>
+                    <span>{communityCount > 0 ? communityCount.toLocaleString() : '...'} khojis have joined</span>
                 </div>
             </div>
         </div>

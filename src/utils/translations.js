@@ -24,9 +24,9 @@ export const translations = {
         readySub: "Take a moment. Close your eyes. Begin.",
         iMeditatedBtn: "I Meditated Today",
         // CommunityCard
-        peopleMeditated: "people meditated today",
+        peopleMeditated: "khojis meditated today",
         partOfCollective: "You are part of this collective stillness.",
-        seekersJoined: "{total} seekers have joined the challenge",
+        seekersJoined: "{total} khojis have joined the challenge",
         // ProgressGrid
         yourJourney: "Your Journey",
         day: "Day",
@@ -76,7 +76,7 @@ export const translations = {
         certShareText: "🪷 I completed the Tej Gyan Foundation 11-Day Meditation Challenge!",
         certTitle: "11-Day Meditation Challenge",
         certAwardedTo: "Awarded to",
-        certDefaultName: "Meditator",
+        certDefaultName: "Khoji",
         certBodyText: "For successfully completing 11 consecutive days of mindful meditation practice as part of the Tej Gyan Foundation Meditation Challenge.",
         certOrg: "Tej Gyan Foundation",
         certGeneratingBtn: "Generating...",
@@ -112,9 +112,9 @@ export const translations = {
         readySub: "एक पल लें। अपनी आँखें बंद करें। शुरू करें।",
         iMeditatedBtn: "मैंने आज ध्यान किया",
         // CommunityCard
-        peopleMeditated: "लोगों ने आज ध्यान किया",
+        peopleMeditated: "खोजियों ने आज ध्यान किया",
         partOfCollective: "आप इस सामूहिक ध्यान का हिस्सा हैं।",
-        seekersJoined: "{total} साधक इस चुनौती में शामिल हुए हैं",
+        seekersJoined: "{total} खोजी इस चुनौती में शामिल हुए हैं",
         // ProgressGrid
         yourJourney: "आपकी यात्रा",
         day: "दिन",
@@ -164,7 +164,7 @@ export const translations = {
         certShareText: "🪷 मैंने तेज ज्ञान फाउंडेशन की 11-दिवसीय ध्यान चुनौती पूरी कर ली है!",
         certTitle: "11-दिवसीय ध्यान चुनौती",
         certAwardedTo: "प्रदान किया गया",
-        certDefaultName: "साधक",
+        certDefaultName: "खोजी",
         certBodyText: "तेज ज्ञान फाउंडेशन ध्यान चुनौती के भाग के रूप में लगातार 11 दिनों तक ध्यान अभ्यास सफलतापूर्वक पूरा करने के लिए।",
         certOrg: "तेज ज्ञान फाउंडेशन",
         certGeneratingBtn: "उत्पन्न हो रहा है...",

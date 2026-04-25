@@ -122,10 +122,6 @@ export function DashboardScreen() {
                     <button className="lang-toggle-btn" onClick={toggleLanguage}>
                         {language === 'en' ? 'अ / A' : 'A / अ'}
                     </button>
-                    <div className="day-badge">
-                        <span className="day-badge__number">{selectedDay}</span>
-                        <span className="day-badge__label">{t(language, 'of')} {totalDays}</span>
-                    </div>
                 </div>
             </header>
 
