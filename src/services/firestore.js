@@ -250,10 +250,10 @@ export async function syncOfflineChallenges(userIdentifier, localChallenges, rem
 
 // ============ COMMUNITY COUNT ============
 
-export async function countMeditatedToday(dateISO) {
+export async function countMeditatedToday(dateISO, force = false) {
     const now = Date.now();
     // Cache daily count heavily (especially helpful on dashboard re-renders)
-    if (cache.communityCounts.daily !== null && (now - cache.communityCounts.timestamp < CACHE_TTL_MS)) {
+    if (!force && cache.communityCounts.daily !== null && (now - cache.communityCounts.timestamp < CACHE_TTL_MS)) {
         return cache.communityCounts.daily;
     }
 
@@ -272,9 +272,9 @@ export async function countMeditatedToday(dateISO) {
     }
 }
 
-export async function getTotalParticipants() {
+export async function getTotalParticipants(force = false) {
     const now = Date.now();
-    if (cache.communityCounts.total !== null && (now - cache.communityCounts.timestamp < CACHE_TTL_MS)) {
+    if (!force && cache.communityCounts.total !== null && (now - cache.communityCounts.timestamp < CACHE_TTL_MS)) {
         return cache.communityCounts.total;
     }
 

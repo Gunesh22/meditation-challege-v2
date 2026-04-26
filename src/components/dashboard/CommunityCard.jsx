@@ -16,23 +16,33 @@ export function CommunityCard() {
     useEffect(() => {
         let cancelled = false;
 
-        async function fetchCounts() {
+        async function fetchCounts(force = false) {
             try {
                 const [daily, total] = await Promise.all([
-                    countMeditatedToday(getTodayISO()),
-                    getTotalParticipants(),
+                    countMeditatedToday(getTodayISO(), force),
+                    getTotalParticipants(force),
                 ]);
                 if (!cancelled) {
                     setTodayCount(daily);
                     setTotalParticipants(total);
                 }
             } catch {
-                // Silently fail — shows 0
+                // Silently fail — shows 0 or previous
             }
         }
 
-        fetchCounts();
-        return () => { cancelled = true; };
+        // Initial fetch without forcing refresh (uses cache if available)
+        fetchCounts(false);
+
+        // Fetch every 15 seconds, forcing cache bypass for real-time updates
+        const intervalId = setInterval(() => {
+            fetchCounts(true);
+        }, 15000);
+
+        return () => { 
+            cancelled = true; 
+            clearInterval(intervalId);
+        };
     }, []);
 
     return (
