@@ -41,13 +41,8 @@ const ADMIN_SETTINGS = 'admin_settings';
 
 // ============ HELPERS ============
 
-function sanitizeIdentifier(identifier) {
-    if (!identifier) return '';
-    if (identifier.includes('@')) {
-        // Safe encoding for email as firestore doc ID
-        return identifier.trim().toLowerCase().replace(/[^a-z0-9@.-]/g, '');
-    }
-    return identifier.replace(/\D/g, '');
+function sanitizePhone(phone) {
+    return phone.replace(/\D/g, '');
 }
 
 async function withRetry(fn) {
@@ -69,7 +64,7 @@ async function withRetry(fn) {
  * Register or get a base user profile.
  */
 export async function registerParticipant({ name, email, phone }) {
-    const docId = sanitizeIdentifier(phone || email);
+    const docId = sanitizePhone(phone);
 
     return await withRetry(async () => {
         const docRef = doc(db, USERS, docId);
@@ -93,8 +88,8 @@ export async function registerParticipant({ name, email, phone }) {
 /**
  * Join a specific challenge
  */
-export async function joinChallenge(userIdentifier, challengeId, startDate) {
-    const userId = sanitizeIdentifier(userIdentifier);
+export async function joinChallenge(phone, challengeId, startDate) {
+    const userId = sanitizePhone(phone);
     const docId = `${userId}_${challengeId}`;
 
     return await withRetry(async () => {
@@ -121,8 +116,8 @@ export async function joinChallenge(userIdentifier, challengeId, startDate) {
 /**
  * Load user profile AND all their joined challenges.
  */
-export async function getParticipant(userIdentifier) {
-    const userId = sanitizeIdentifier(userIdentifier);
+export async function getParticipant(phone) {
+    const userId = sanitizePhone(phone);
 
     // 1. Get user profile
     const userRef = doc(db, USERS, userId);
@@ -161,8 +156,8 @@ export async function getParticipant(userIdentifier) {
 /**
  * Mark a day as completed with reflection data for a Specific Challenge.
  */
-export async function completeDay(userIdentifier, challengeId, dateISO, feeling, thought) {
-    const userId = sanitizeIdentifier(userIdentifier);
+export async function completeDay(phone, challengeId, dateISO, feeling, thought) {
+    const userId = sanitizePhone(phone);
     const docId = `${userId}_${challengeId}`;
 
     await withRetry(async () => {
@@ -190,8 +185,8 @@ export async function completeDay(userIdentifier, challengeId, dateISO, feeling,
 /**
  * Sync all local offline challenge progress to Firestore in a single batch
  */
-export async function syncOfflineChallenges(userIdentifier, localChallenges, remoteChallenges) {
-    const userId = sanitizeIdentifier(userIdentifier);
+export async function syncOfflineChallenges(phone, localChallenges, remoteChallenges) {
+    const userId = sanitizePhone(phone);
 
     return await withRetry(async () => {
         const batch = writeBatch(db);

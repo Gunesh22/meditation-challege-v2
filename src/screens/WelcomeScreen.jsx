@@ -7,7 +7,6 @@ import { useChallengeContext } from '../context/ChallengeContext';
 import { FloatingParticles } from '../components/ui/FloatingParticles';
 import { Button } from '../components/ui/Button';
 import { getTotalParticipants } from '../services/firestore';
-import logoUrl from '../logo.png';
 import './WelcomeScreen.css';
 
 export function WelcomeScreen() {
@@ -42,7 +41,7 @@ export function WelcomeScreen() {
         e.preventDefault();
         setError('');
 
-        if (!name.trim() || !email.trim()) return;
+        if (!name.trim() || !email.trim() || !phone.trim()) return;
 
         // Basic Email Validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -52,12 +51,10 @@ export function WelcomeScreen() {
         }
 
         // Basic Phone Validation (Allows +, numbers, spaces, dashes, 10-15 chars)
-        if (phone.trim()) {
-            const phoneRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
-            if (!phoneRegex.test(phone.trim())) {
-                setError('Please enter a valid phone number (e.g. 9876543210).');
-                return;
-            }
+        const phoneRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
+        if (!phoneRegex.test(phone.trim())) {
+            setError('Please enter a valid phone number (e.g. 9876543210).');
+            return;
         }
 
         setIsRegistering(true);
@@ -74,7 +71,7 @@ export function WelcomeScreen() {
             <div className="welcome-bg">
                 <FloatingParticles count={20} />
                 <div className="welcome-content loading-content">
-                    <img src={logoUrl} alt="Happy Thoughts Logo" className="brand-logo pulse" />
+                    <div className="lotus-icon">🪷</div>
                     <h2 className="loading-title fade-in delay-1">Preparing your journey...</h2>
                     <p className="loading-subtitle fade-in delay-2">Taking a deep breath</p>
                 </div>
@@ -89,7 +86,7 @@ export function WelcomeScreen() {
             <div className="welcome-content">
                 {/* Logo */}
                 <div className="welcome-logo fade-in">
-                    <img src={logoUrl} alt="Happy Thoughts Logo" className="brand-logo" />
+                    <div className="lotus-icon">🪷</div>
                     <h1 className="welcome-title">
                         Meditation<br /><span>Challenge Platform</span>
                     </h1>
@@ -130,11 +127,12 @@ export function WelcomeScreen() {
                         />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="user-phone">Phone Number (Optional)</label>
+                        <label htmlFor="user-phone">Phone Number</label>
                         <input
                             id="user-phone"
                             type="tel"
                             placeholder="Enter your phone number"
+                            required
                             minLength={10}
                             maxLength={15}
                             value={phone}

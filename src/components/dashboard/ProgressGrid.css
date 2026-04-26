@@ -16,11 +16,11 @@
 }
 
 .progress-counter {
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: var(--text-primary);
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-accent);
     padding: 4px 12px;
-    background: rgba(255, 214, 0, 0.25);
+    background: rgba(76, 175, 80, 0.1);
     border-radius: var(--radius-full);
 }
 
@@ -33,9 +33,8 @@
 .progress-day {
     aspect-ratio: 1;
     border-radius: var(--radius-md);
-    background: #ffffff;
+    background: var(--bg-card);
     border: 1px solid var(--border-subtle);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -66,8 +65,8 @@
 }
 
 .progress-day--completed {
-    background: #fff5cc;
-    border-color: rgba(255, 214, 0, 0.4);
+    background: linear-gradient(135deg, rgba(46, 125, 50, 0.2), rgba(30, 80, 45, 0.3));
+    border-color: rgba(76, 175, 80, 0.3);
 }
 
 .progress-day--completed .progress-day__icon {
@@ -79,32 +78,30 @@
 }
 
 .progress-day--today {
-    background: var(--gold-400);
-    border-color: var(--gold-400);
-    box-shadow: 0 4px 16px rgba(255, 214, 0, 0.3);
+    border-color: var(--green-600);
+    box-shadow: 0 0 16px rgba(76, 175, 80, 0.15);
 }
 
 .progress-day--today .progress-day__num {
-    color: var(--text-accent);
+    color: var(--green-400);
     font-weight: 700;
 }
 
 .progress-day--selected {
-    background: var(--gold-400);
     border-color: var(--gold-400);
-    box-shadow: 0 4px 20px rgba(255, 214, 0, 0.3);
+    box-shadow: 0 0 20px rgba(255, 202, 40, 0.2);
+    background: rgba(255, 202, 40, 0.06);
 }
 
 .progress-day--selected .progress-day__num {
-    color: var(--text-accent);
+    color: var(--gold-400);
     font-weight: 700;
 }
 
 /* completed + selected */
 .progress-day--completed.progress-day--selected {
-    background: var(--gold-400);
     border-color: var(--gold-400);
-    box-shadow: 0 4px 20px rgba(255, 214, 0, 0.3);
+    box-shadow: 0 0 20px rgba(255, 202, 40, 0.2);
 }
 
 /* Last 3 items centered */
@@ -122,16 +119,14 @@
 
 /* Locked / not allowed */
 .progress-day--locked {
-    opacity: 0.7;
-    background: #f1f5f9;
-    border-color: #e2e8f0;
+    opacity: 0.4;
     cursor: not-allowed;
     pointer-events: none;
 }
 
 .progress-day--locked .progress-day__icon {
-    opacity: 0.8;
-    font-size: 1.05rem;
+    opacity: 0.5;
+    font-size: 0.9rem;
 }
 
 @media (min-width: 480px) {
