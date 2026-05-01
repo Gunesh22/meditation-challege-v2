@@ -64,6 +64,25 @@ function sanitizeIdentifier(identifier) {
     return identifier.replace(/\D/g, '');
 }
 
+/**
+ * Resolve any identifier to the correct Firestore document ID.
+ *
+ * NEW users  → have a composite key stored in state.userId (e.g. "john_gmail_com__9876543210")
+ *              These contain "__" and are passed through unchanged.
+ *
+ * OLD users  → have only raw phone or email in localStorage from before this change.
+ *              We sanitize them exactly as before so we still hit their original doc.
+ *
+ * This ensures existing participants are never double-counted or lost.
+ */
+function resolveUserId(identifier) {
+    if (!identifier) return '';
+    // Composite key (new format) — already the correct doc ID
+    if (identifier.includes('__')) return identifier;
+    // Legacy format — sanitize to match the original stored doc ID
+    return sanitizeIdentifier(identifier);
+}
+
 async function withRetry(fn) {
     try {
         return await fn();
@@ -111,8 +130,7 @@ export async function registerParticipant({ name, email, phone }) {
  * Join a specific challenge
  */
 export async function joinChallenge(userIdentifier, challengeId, startDate) {
-    // userIdentifier is already the composite userId stored in state
-    const userId = userIdentifier;
+    const userId = resolveUserId(userIdentifier);
     const docId = `${userId}_${challengeId}`;
 
     return await withRetry(async () => {
@@ -138,10 +156,11 @@ export async function joinChallenge(userIdentifier, challengeId, startDate) {
 
 /**
  * Load user profile AND all their joined challenges.
- * userIdentifier should be the composite ID (email__phone) stored in state.
+ * Handles both new composite IDs (email__phone) and legacy phone/email identifiers
+ * so existing participants always resolve to their original Firestore document.
  */
 export async function getParticipant(userIdentifier) {
-    const userId = userIdentifier;
+    const userId = resolveUserId(userIdentifier);
 
     // 1. Get user profile
     const userRef = doc(db, USERS, userId);
@@ -181,8 +200,7 @@ export async function getParticipant(userIdentifier) {
  * Mark a day as completed with reflection data for a Specific Challenge.
  */
 export async function completeDay(userIdentifier, challengeId, dateISO, feeling, thought) {
-    // userIdentifier is already the composite userId
-    const userId = userIdentifier;
+    const userId = resolveUserId(userIdentifier);
     const docId = `${userId}_${challengeId}`;
 
     await withRetry(async () => {
@@ -211,8 +229,7 @@ export async function completeDay(userIdentifier, challengeId, dateISO, feeling,
  * Sync all local offline challenge progress to Firestore in a single batch
  */
 export async function syncOfflineChallenges(userIdentifier, localChallenges, remoteChallenges) {
-    // userIdentifier is already the composite userId
-    const userId = userIdentifier;
+    const userId = resolveUserId(userIdentifier);
 
     return await withRetry(async () => {
         const batch = writeBatch(db);
