@@ -40,7 +40,7 @@ export function useChallenge() {
                     setState(prev => { resolve(prev); return prev; });
                 });
 
-                const userIdentifier = latestState.phone || latestState.email;
+                const userIdentifier = latestState.userId || latestState.phone || latestState.email;
 
                 if (userIdentifier) {
                     let remote = await firestore.getParticipant(userIdentifier);
@@ -139,7 +139,16 @@ export function useChallenge() {
         try {
             const remoteUser = await firestore.registerParticipant({ name, email, phone });
             if (remoteUser) {
-                const merged = { ...state, registered: true, name: remoteUser.name || name, email: remoteUser.email || email, phone: remoteUser.phone || phone, challenges: state.challenges || {} };
+                // Store the composite Firestore doc ID so all future calls target the right document
+                const merged = {
+                    ...state,
+                    registered: true,
+                    userId: remoteUser.id,          // composite key (email__phone)
+                    name: remoteUser.name || name,
+                    email: remoteUser.email || email,
+                    phone: remoteUser.phone || phone,
+                    challenges: state.challenges || {}
+                };
                 persist(merged);
                 return;
             }
@@ -167,7 +176,7 @@ export function useChallenge() {
             next.challenges[challengeId] = { startDate: actualStartDate, completedDays: {}, reflections: {} };
 
             // Sync to firestore — enqueue on failure for later retry
-            const userIdentifier = state.phone || state.email;
+            const userIdentifier = state.userId || state.phone || state.email;
             if (userIdentifier) {
                 firestore.joinChallenge(userIdentifier, challengeId, actualStartDate).catch(() => {
                     enqueueSync('joinChallenge', [userIdentifier, challengeId, actualStartDate]);
@@ -252,7 +261,7 @@ export function useChallenge() {
 
         persist(next);
 
-        const userIdentifier = state.phone || state.email;
+        const userIdentifier = state.userId || state.phone || state.email;
         if (userIdentifier) {
             firestore.completeDay(userIdentifier, challengeId, dateForDay, feeling, thought).catch(() => {
                 enqueueSync('completeDay', [userIdentifier, challengeId, dateForDay, feeling, thought]);

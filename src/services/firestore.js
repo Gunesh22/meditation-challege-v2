@@ -2,10 +2,11 @@
 // Multiple Challenges Architecture
 //
 // Data Model:
-//   users/{sanitizedPhone}
+//   users/{emailSlug}_{sanitizedPhone}
 //     - name, email, phone, createdAt, isAdmin
+//     Composite key ensures same name + different email OR phone = new participant.
 //
-//   user_challenges/{sanitizedPhone}_{challengeId}
+//   user_challenges/{userId}_{challengeId}
 //     - userId, challengeId, startDate, createdAt
 //     - completedDays: { "YYYY-MM-DD": true, ... }
 //     - reflections:   { "YYYY-MM-DD": { feeling, thought }, ... }
@@ -42,10 +43,22 @@ const ADMIN_SETTINGS = 'admin_settings';
 
 // ============ HELPERS ============
 
+/**
+ * Build a stable, unique Firestore document ID from email + phone.
+ * Same name with a different email OR phone will produce a different ID
+ * and therefore be stored as a separate participant.
+ */
+function buildUserId(email, phone) {
+    const emailSlug = (email || '').trim().toLowerCase().replace(/[^a-z0-9]/g, '_');
+    const phoneSlug = (phone || '').replace(/\D/g, '');
+    // At least one must be present (form requires email)
+    return `${emailSlug}__${phoneSlug}`;
+}
+
+/** Legacy helper kept for reading existing records by phone/email identifier */
 function sanitizeIdentifier(identifier) {
     if (!identifier) return '';
     if (identifier.includes('@')) {
-        // Safe encoding for email as firestore doc ID
         return identifier.trim().toLowerCase().replace(/[^a-z0-9@.-]/g, '');
     }
     return identifier.replace(/\D/g, '');
@@ -67,19 +80,22 @@ async function withRetry(fn) {
 // ============ USER & CHALLENGE OPERATIONS ============
 
 /**
- * Register or get a base user profile.
+ * Register a new participant (always creates a new record if email+phone combo is unique).
+ * Same name with a different email or phone number = new participant document.
  */
 export async function registerParticipant({ name, email, phone }) {
-    const docId = sanitizeIdentifier(phone || email);
+    const docId = buildUserId(email, phone);
 
     return await withRetry(async () => {
         const docRef = doc(db, USERS, docId);
         const snap = await getDoc(docRef);
 
         if (snap.exists()) {
+            // Same email+phone combo already registered — return existing record
             return { id: docId, ...snap.data() };
         }
 
+        // Different email or phone → brand new participant
         const newData = {
             name,
             email,
@@ -95,7 +111,8 @@ export async function registerParticipant({ name, email, phone }) {
  * Join a specific challenge
  */
 export async function joinChallenge(userIdentifier, challengeId, startDate) {
-    const userId = sanitizeIdentifier(userIdentifier);
+    // userIdentifier is already the composite userId stored in state
+    const userId = userIdentifier;
     const docId = `${userId}_${challengeId}`;
 
     return await withRetry(async () => {
@@ -121,9 +138,10 @@ export async function joinChallenge(userIdentifier, challengeId, startDate) {
 
 /**
  * Load user profile AND all their joined challenges.
+ * userIdentifier should be the composite ID (email__phone) stored in state.
  */
 export async function getParticipant(userIdentifier) {
-    const userId = sanitizeIdentifier(userIdentifier);
+    const userId = userIdentifier;
 
     // 1. Get user profile
     const userRef = doc(db, USERS, userId);
@@ -163,7 +181,8 @@ export async function getParticipant(userIdentifier) {
  * Mark a day as completed with reflection data for a Specific Challenge.
  */
 export async function completeDay(userIdentifier, challengeId, dateISO, feeling, thought) {
-    const userId = sanitizeIdentifier(userIdentifier);
+    // userIdentifier is already the composite userId
+    const userId = userIdentifier;
     const docId = `${userId}_${challengeId}`;
 
     await withRetry(async () => {
@@ -192,7 +211,8 @@ export async function completeDay(userIdentifier, challengeId, dateISO, feeling,
  * Sync all local offline challenge progress to Firestore in a single batch
  */
 export async function syncOfflineChallenges(userIdentifier, localChallenges, remoteChallenges) {
-    const userId = sanitizeIdentifier(userIdentifier);
+    // userIdentifier is already the composite userId
+    const userId = userIdentifier;
 
     return await withRetry(async () => {
         const batch = writeBatch(db);
