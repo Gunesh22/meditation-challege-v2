@@ -91,7 +91,7 @@ export function WelcomeScreen() {
                 <div className="welcome-logo fade-in">
                     <img src={logoUrl} alt="Happy Thoughts Logo" className="brand-logo" />
                     <h1 className="welcome-title">
-                        Meditation<br /><span>Challenge Platform</span>
+                        1+1=Eleven Days<br /><span>Meditation Challenge</span>
                     </h1>
                     <p className="welcome-subtitle">by Tej Gyan Foundation</p>
                 </div>
