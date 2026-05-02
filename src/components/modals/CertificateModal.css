@@ -23,9 +23,16 @@
     background: transparent;
 }
 
-.cert-lotus {
-    font-size: 36px;
-    margin-bottom: 8px;
+.cert-logo-container {
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: center;
+}
+
+.cert-logo {
+    height: 80px;
+    width: auto;
+    object-fit: contain;
 }
 
 .cert-pre {

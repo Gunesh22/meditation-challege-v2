@@ -6,6 +6,7 @@ import { Button } from '../ui/Button';
 import { formatDate } from '../../utils/dateHelpers';
 import { toBlob } from 'html-to-image';
 import { t } from '../../utils/translations';
+import logoUrl from '../../logo.png';
 import './CertificateModal.css';
 
 export function CertificateModal({ isOpen, onClose }) {
@@ -94,7 +95,9 @@ export function CertificateModal({ isOpen, onClose }) {
             <div className="certificate-wrapper" ref={certRef}>
                 <div className="cert-border">
                     <div className="cert-content">
-                        <div className="cert-lotus">🪷</div>
+                        <div className="cert-logo-container">
+                            <img src={logoUrl} alt="Logo" className="cert-logo" />
+                        </div>
                         <p className="cert-pre">{t(language, 'certCompletion')}</p>
                         <h2 className="cert-title">{activeChallengeDef?.title || t(language, 'certTitle')}</h2>
                         <div className="cert-divider" />
