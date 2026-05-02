@@ -56,6 +56,8 @@ export function useChallenge() {
 
                     if (remote && !cancelled) {
                         // Push any local challenges/progress that didn't make it to Firebase
+                        // ONLY if the start dates match. If they don't, a server migration happened,
+                        // and pushing old local dates would corrupt the migrated remote data.
                         if (latestState.challenges) {
                             await firestore.syncOfflineChallenges(
                                 userIdentifier,
@@ -75,13 +77,21 @@ export function useChallenge() {
                                 for (const [chId, remoteData] of Object.entries(remote.challenges)) {
                                     if (merged.challenges[chId]) {
                                         const localData = merged.challenges[chId];
-                                        // Deep merge to ensure local offline progress isn't overwritten by stale remote data
-                                        merged.challenges[chId] = {
-                                            ...remoteData,
-                                            ...localData,
-                                            completedDays: { ...remoteData.completedDays, ...localData.completedDays },
-                                            reflections: { ...remoteData.reflections, ...localData.reflections }
-                                        };
+                                        
+                                        // If the server has a different start date, it means a migration occurred.
+                                        // In this case, we MUST take the remote data as absolute truth, otherwise
+                                        // we'll revert the startDate and corrupt the timeline with old date strings.
+                                        if (remoteData.startDate !== localData.startDate) {
+                                            merged.challenges[chId] = remoteData;
+                                        } else {
+                                            // Normal deep merge for offline progress
+                                            merged.challenges[chId] = {
+                                                ...remoteData,
+                                                ...localData,
+                                                completedDays: { ...remoteData.completedDays, ...localData.completedDays },
+                                                reflections: { ...remoteData.reflections, ...localData.reflections }
+                                            };
+                                        }
                                     } else {
                                         merged.challenges[chId] = remoteData;
                                     }

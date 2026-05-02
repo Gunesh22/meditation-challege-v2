@@ -252,6 +252,12 @@ export async function syncOfflineChallenges(userIdentifier, localChallenges, rem
                 });
                 hasChanges = true;
             } else {
+                // If the remote start date differs from the local one, a server-side migration happened.
+                // We MUST skip pushing local offline data, as it uses old date mappings and would corrupt the database.
+                if (remoteData.startDate && remoteData.startDate !== localData.startDate) {
+                    continue;
+                }
+
                 // It exists remotely, but we need to merge any missing completedDays
                 const missingDays = {};
                 const missingReflections = {};
