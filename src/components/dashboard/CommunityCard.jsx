@@ -24,7 +24,7 @@ export function CommunityCard() {
                 ]);
                 if (!cancelled) {
                     setTodayCount(daily > 0 ? daily : 147);
-                    setTotalParticipants(total > 0 ? total : 903);
+                    setTotalParticipants(total > 0 ? total : 843);
                 }
             } catch {
                 // Silently fail — shows 0 or previous

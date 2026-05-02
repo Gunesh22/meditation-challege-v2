@@ -157,7 +157,7 @@ export function WelcomeScreen() {
                 {/* Community badge */}
                 <div className="community-badge fade-in delay-3">
                     <div className="pulse-dot" />
-                    <span>{communityCount > 0 ? communityCount.toLocaleString() : '903'} khojis have joined</span>
+                    <span>{communityCount > 0 ? communityCount.toLocaleString() : '843'} khojis have joined</span>
                 </div>
             </div>
         </div>
