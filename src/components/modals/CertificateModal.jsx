@@ -1,12 +1,11 @@
-import { useRef, useState, useMemo } from 'react';
+import { useRef, useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useChallengeContext } from '../../context/ChallengeContext';
 import { Modal } from '../ui/Modal';
 import { Button } from '../ui/Button';
-import { formatDate } from '../../utils/dateHelpers';
 import { toBlob } from 'html-to-image';
 import { t } from '../../utils/translations';
-import certificateImg from '../../assets/certificate.png';
+import certificateImgSrc from '../../assets/certificate.png';
 import './CertificateModal.css';
 
 export function CertificateModal({ isOpen, onClose }) {
@@ -23,6 +22,24 @@ export function CertificateModal({ isOpen, onClose }) {
     const navigate = useNavigate();
     const certRef = useRef(null);
     const [isSharing, setIsSharing] = useState(false);
+    const [certDataUrl, setCertDataUrl] = useState(null);
+
+    // Preload certificate image as data URL to avoid CORS taint issues
+    // when html-to-image tries to read pixel data from the canvas.
+    useEffect(() => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.naturalWidth;
+            canvas.height = img.naturalHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            setCertDataUrl(canvas.toDataURL('image/png'));
+        };
+        img.onerror = () => setCertDataUrl(certificateImgSrc);
+        img.src = certificateImgSrc;
+    }, []);
 
     const nextChallenges = useMemo(() => {
         return availableChallenges.filter(c => c.id !== activeChallengeDef?.id);
@@ -94,7 +111,7 @@ export function CertificateModal({ isOpen, onClose }) {
         <Modal isOpen={isOpen} onClose={onClose} className="certificate-modal">
             <div className="certificate-wrapper" ref={certRef}>
                 <div className="cert-image-container">
-                    <img src={certificateImg} alt="Certificate" className="cert-bg-image" crossOrigin="anonymous" />
+                    <img src={certDataUrl || certificateImgSrc} alt="Certificate" className="cert-bg-image" />
                     <h3 className="cert-dynamic-name">{state.name || t(language, 'certDefaultName')}</h3>
                 </div>
             </div>

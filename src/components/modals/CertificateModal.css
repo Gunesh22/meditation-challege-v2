@@ -26,17 +26,19 @@
 
 .cert-dynamic-name {
     position: absolute;
-    /* You might need to adjust top depending on the specific line in your PNG */
     top: 27%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-family: 'Kelvinch', serif; /* Ensure you have kelvinch font available */
-    font-size: 1.9rem;
-    color: #542539; /* Adjust the color to match the design */
+    font-family: 'Kelvinch', 'Playfair Display', Georgia, serif;
+    font-size: clamp(0.9rem, 4vw, 1.9rem);
+    color: #542539;
     font-weight: 600;
     text-align: center;
     width: 80%;
     margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .cert-actions {

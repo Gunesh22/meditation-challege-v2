@@ -6,11 +6,9 @@ import { t } from '../../utils/translations';
 import './CompleteBanner.css';
 
 export function CompleteBanner({ onViewCertificate }) {
-    const { state, isChallengeComplete, isChallengeFailed, language } = useChallengeContext();
+    const { isChallengeComplete, isChallengeFailed, language } = useChallengeContext();
 
-    const isTestUser = state?.email === 'test@tgf.com';
-
-    if (isChallengeComplete || isTestUser) {
+    if (isChallengeComplete) {
         return (
             <section className="challenge-complete-banner">
                 <div className="complete-card">
