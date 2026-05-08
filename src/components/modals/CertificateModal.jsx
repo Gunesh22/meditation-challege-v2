@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useChallengeContext } from '../../context/ChallengeContext';
 import { Modal } from '../ui/Modal';
 import { Button } from '../ui/Button';
-import { toBlob } from 'html-to-image';
 import { t } from '../../utils/translations';
 import certificateImgSrc from '../../assets/certificate.png';
 import './CertificateModal.css';
@@ -22,22 +21,14 @@ export function CertificateModal({ isOpen, onClose }) {
     const navigate = useNavigate();
     const certRef = useRef(null);
     const [isSharing, setIsSharing] = useState(false);
-    const [certDataUrl, setCertDataUrl] = useState(null);
+    const [certImage, setCertImage] = useState(null); // Preloaded Image object
 
-    // Preload certificate image as data URL to avoid CORS taint issues
-    // when html-to-image tries to read pixel data from the canvas.
+    // Preload certificate image on mount so it's ready for Canvas export
     useEffect(() => {
         const img = new Image();
         img.crossOrigin = 'anonymous';
-        img.onload = () => {
-            const canvas = document.createElement('canvas');
-            canvas.width = img.naturalWidth;
-            canvas.height = img.naturalHeight;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0);
-            setCertDataUrl(canvas.toDataURL('image/png'));
-        };
-        img.onerror = () => setCertDataUrl(certificateImgSrc);
+        img.onload = () => setCertImage(img);
+        img.onerror = () => console.warn('Failed to preload certificate image');
         img.src = certificateImgSrc;
     }, []);
 
@@ -57,7 +48,7 @@ export function CertificateModal({ isOpen, onClose }) {
     };
 
     const handleShare = async () => {
-        if (!certRef.current || isSharing) return;
+        if (isSharing) return;
 
         setIsSharing(true);
         const challengeName = activeChallengeDef?.title || t(language, 'certTitle');
@@ -66,22 +57,39 @@ export function CertificateModal({ isOpen, onClose }) {
             : `🪷 I completed the Tej Gyan Foundation "${challengeName}"!`;
 
         try {
-            // Wait for the certificate image to fully render in the DOM
-            const imgEl = certRef.current.querySelector('img');
-            if (imgEl && !imgEl.complete) {
-                await new Promise((resolve) => {
-                    imgEl.onload = resolve;
-                    imgEl.onerror = resolve;
-                    setTimeout(resolve, 3000); // fallback timeout
+            // Use the preloaded image; if not ready yet, load it now
+            let img = certImage;
+            if (!img) {
+                img = await new Promise((resolve, reject) => {
+                    const i = new Image();
+                    i.crossOrigin = 'anonymous';
+                    i.onload = () => resolve(i);
+                    i.onerror = reject;
+                    i.src = certificateImgSrc;
                 });
             }
-            // Small delay to let the browser paint the final frame
-            await new Promise(r => setTimeout(r, 300));
 
-            const blob = await toBlob(certRef.current, {
-                cacheBust: false,
-                backgroundColor: '#060e0a',
-                style: { margin: '0' },
+            // Draw certificate + name on Canvas (instant, no html-to-image needed)
+            const canvas = document.createElement('canvas');
+            canvas.width = img.naturalWidth;
+            canvas.height = img.naturalHeight;
+            const ctx = canvas.getContext('2d');
+
+            // Draw the certificate background
+            ctx.drawImage(img, 0, 0);
+
+            // Draw the user's name — matches CSS: top 27%, centered, 8% of width
+            const userName = state.name || t(language, 'certDefaultName');
+            const fontSize = Math.round(canvas.width * 0.08);
+            ctx.font = `bold ${fontSize}px Kelvinch, "Playfair Display", Georgia, serif`;
+            ctx.fillStyle = '#542539';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(userName, canvas.width / 2, canvas.height * 0.27);
+
+            // Convert canvas to blob
+            const blob = await new Promise((resolve) => {
+                canvas.toBlob(resolve, 'image/png');
             });
 
             if (!blob) throw new Error("Could not generate image");
@@ -123,7 +131,7 @@ export function CertificateModal({ isOpen, onClose }) {
         <Modal isOpen={isOpen} onClose={onClose} className="certificate-modal">
             <div className="certificate-wrapper" ref={certRef}>
                 <div className="cert-image-container">
-                    <img src={certDataUrl || certificateImgSrc} alt="Certificate" className="cert-bg-image" />
+                    <img src={certificateImgSrc} alt="Certificate" className="cert-bg-image" />
                     <h3 className="cert-dynamic-name">{state.name || t(language, 'certDefaultName')}</h3>
                 </div>
             </div>
