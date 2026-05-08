@@ -6,7 +6,7 @@ import { Button } from '../ui/Button';
 import { formatDate } from '../../utils/dateHelpers';
 import { toBlob } from 'html-to-image';
 import { t } from '../../utils/translations';
-import logoUrl from '../../logo.png';
+import certificateImg from '../../assets/certificate.png';
 import './CertificateModal.css';
 
 export function CertificateModal({ isOpen, onClose }) {
@@ -93,26 +93,9 @@ export function CertificateModal({ isOpen, onClose }) {
     return (
         <Modal isOpen={isOpen} onClose={onClose} className="certificate-modal">
             <div className="certificate-wrapper" ref={certRef}>
-                <div className="cert-border">
-                    <div className="cert-content">
-                        <div className="cert-logo-container">
-                            <img src={logoUrl} alt="Logo" className="cert-logo" />
-                        </div>
-                        <p className="cert-pre">{t(language, 'certCompletion')}</p>
-                        <h2 className="cert-title">{activeChallengeDef?.title || t(language, 'certTitle')}</h2>
-                        <div className="cert-divider" />
-                        <p className="cert-awarded">{t(language, 'certAwardedTo')}</p>
-                        <h3 className="cert-name">{state.name || t(language, 'certDefaultName')}</h3>
-                        <p className="cert-body">
-                            {language === 'hi'
-                                ? `तेज ज्ञान फाउंडेशन ध्यान चुनौती के भाग के रूप में ${totalDays} दिनों तक ध्यान अभ्यास सफलतापूर्वक पूरा करने के लिए।`
-                                : `For successfully completing ${totalDays} days of mindful meditation practice as part of the Tej Gyan Foundation ${activeChallengeDef?.title || 'Meditation Challenge'}.`
-                            }
-                        </p>
-                        <div className="cert-divider" />
-                        <p className="cert-date">{formatDate(new Date())}</p>
-                        <p className="cert-org">{t(language, 'certOrg')}</p>
-                    </div>
+                <div className="cert-image-container">
+                    <img src={certificateImg} alt="Certificate" className="cert-bg-image" crossOrigin="anonymous" />
+                    <h3 className="cert-dynamic-name">{state.name || t(language, 'certDefaultName')}</h3>
                 </div>
             </div>
 
