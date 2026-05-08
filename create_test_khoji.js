@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, doc, setDoc } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, query, where } from 'firebase/firestore';
 
 const firebaseConfig = {
     apiKey: "AIzaSyBtLTZInxyKjbQCoSvqKOGDdOjhrOFfgaM",
@@ -13,56 +13,34 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-async function createTestUser() {
-    const email = 'testkhoji@tgf.com';
-    const phone = ''; // empty phone
-    const name = 'Test Khoji';
+async function checkTestUser() {
+    // Check both possible user IDs
+    const ids = ['testkhoji_tgf_com__', 'testkhoji_tgf_com__0000000000'];
     
-    const emailSlug = email.toLowerCase().replace(/[^a-z0-9]/g, '_');
-    const phoneSlug = phone.replace(/\D/g, '');
-    const userId = `${emailSlug}__${phoneSlug}`; // should be testkhoji_tgf_com__
-
-    const challengeId = '11_day_intro';
-    const startDate = '2026-05-02';
-
-    console.log(`Creating user: ${userId}`);
-
-    try {
-        await setDoc(doc(db, 'users', userId), {
-            name,
-            email,
-            phone,
-            createdAt: new Date()
-        });
-
-        const docId = `${userId}_${challengeId}`;
+    for (const userId of ids) {
+        console.log(`\n--- Checking userId: "${userId}" ---`);
         
-        const completedDays = {};
-        const reflections = {};
+        const q = query(
+            collection(db, 'user_challenges'),
+            where('userId', '==', userId)
+        );
+        const snap = await getDocs(q);
         
-        let currentDate = new Date(startDate);
-        for(let i=0; i<11; i++) {
-            const dateStr = currentDate.toISOString().split('T')[0];
-            completedDays[dateStr] = true;
-            reflections[dateStr] = { feeling: 'peaceful', thought: 'test' };
-            currentDate.setDate(currentDate.getDate() + 1);
+        if (snap.empty) {
+            console.log('  No challenges found.');
+        } else {
+            snap.forEach(docSnap => {
+                const data = docSnap.data();
+                const completedCount = Object.keys(data.completedDays || {}).length;
+                console.log(`  Doc ID: ${docSnap.id}`);
+                console.log(`  Challenge: ${data.challengeId}`);
+                console.log(`  Start: ${data.startDate}`);
+                console.log(`  Completed days: ${completedCount}`);
+            });
         }
-
-        await setDoc(doc(db, 'user_challenges', docId), {
-            userId,
-            challengeId,
-            startDate,
-            completedDays,
-            reflections,
-            createdAt: new Date()
-        });
-
-        console.log(`✅ Test user created successfully without a phone number!`);
-        process.exit(0);
-    } catch (err) {
-        console.error('❌ Failed to create test user:', err);
-        process.exit(1);
     }
+    
+    process.exit(0);
 }
 
-createTestUser();
+checkTestUser();
