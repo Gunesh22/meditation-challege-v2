@@ -66,8 +66,20 @@ export function CertificateModal({ isOpen, onClose }) {
             : `🪷 I completed the Tej Gyan Foundation "${challengeName}"!`;
 
         try {
+            // Wait for the certificate image to fully render in the DOM
+            const imgEl = certRef.current.querySelector('img');
+            if (imgEl && !imgEl.complete) {
+                await new Promise((resolve) => {
+                    imgEl.onload = resolve;
+                    imgEl.onerror = resolve;
+                    setTimeout(resolve, 3000); // fallback timeout
+                });
+            }
+            // Small delay to let the browser paint the final frame
+            await new Promise(r => setTimeout(r, 300));
+
             const blob = await toBlob(certRef.current, {
-                cacheBust: true,
+                cacheBust: false,
                 backgroundColor: '#060e0a',
                 style: { margin: '0' },
             });
