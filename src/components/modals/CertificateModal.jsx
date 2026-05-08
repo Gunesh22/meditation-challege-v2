@@ -120,6 +120,8 @@ export function CertificateModal({ isOpen, onClose }) {
                 }
             }
         } catch (error) {
+            // User cancelling the share dialog throws AbortError — not a real error
+            if (error?.name === 'AbortError') return;
             console.error('Failed to share certificate:', error);
             alert(t(language, 'certError'));
         } finally {
