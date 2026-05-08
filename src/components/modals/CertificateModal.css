@@ -16,6 +16,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    container-type: inline-size;
 }
 
 .cert-bg-image {
@@ -30,7 +31,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
     font-family: 'Kelvinch', 'Playfair Display', Georgia, serif;
-    font-size: clamp(0.9rem, 4vw, 1.9rem);
+    font-size: 5.5cqw;
     color: #542539;
     font-weight: 600;
     text-align: center;
