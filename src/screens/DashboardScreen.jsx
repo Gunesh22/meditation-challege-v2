@@ -91,9 +91,10 @@ export function DashboardScreen() {
     }, [selectedDay, isDayCompleted, isDayAllowed, isChallengeComplete, isChallengeFailed, language]);
 
     const handleReflectionComplete = useCallback(() => {
-        // After completing, check if challenge is now done (completedCount + 1 because
-        // state hasn't re-rendered yet — the day we just completed is the +1)
-        if (completedCount + 1 >= totalDays) {
+        // By the time the user taps "Done" on the completion screen, React has already
+        // re-rendered with the updated completedCount (the newly completed day is already
+        // counted). So we compare directly — no +1 needed.
+        if (completedCount >= totalDays) {
             // Small delay so the reflection modal closes first
             setTimeout(() => setShowCertificate(true), 600);
         }
