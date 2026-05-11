@@ -85,3 +85,21 @@ export function getDayLabel(dayNum, challengeId = '11_day_intro') {
     }
     return `Day ${dayNum}`;
 }
+
+/**
+ * Safely counts the number of completed days, ensuring we only count
+ * dates that strictly fall within the challenge timeline (Day 1 to totalDays).
+ * This prevents users from getting credit for previous challenge dates if
+ * they migrated to a new cohort timeline.
+ */
+export function getValidCompletedDaysCount(completedDays, startDate, totalDays) {
+    if (!completedDays || !startDate) return 0;
+    let count = 0;
+    for (let i = 1; i <= totalDays; i++) {
+        const dateStr = getDateForDay(startDate, i);
+        if (dateStr && completedDays[dateStr]) {
+            count++;
+        }
+    }
+    return count;
+}

@@ -219,7 +219,18 @@ export function useChallenge() {
     // Clamped for UI display (never shows > totalDays)
     const clampedCurrentDay = Math.min(rawCurrentDay, totalDays);
 
-    const completedCount = useMemo(() => activeData ? Object.keys(activeData.completedDays || {}).length : 0, [activeData]);
+    const completedCount = useMemo(() => {
+        if (!activeData || !effectiveStartDate) return 0;
+        let count = 0;
+        for (let i = 1; i <= totalDays; i++) {
+            const dateStr = getDateForDay(effectiveStartDate, i);
+            if (dateStr && activeData.completedDays && activeData.completedDays[dateStr]) {
+                count++;
+            }
+        }
+        return count;
+    }, [activeData, effectiveStartDate, totalDays]);
+    
     const isChallengeComplete = completedCount >= totalDays;
 
     // Grace period: allow up to 3 days after the challenge ends so users

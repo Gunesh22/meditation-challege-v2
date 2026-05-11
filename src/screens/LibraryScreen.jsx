@@ -4,7 +4,7 @@ import { useChallengeContext } from '../context/ChallengeContext';
 import { Button } from '../components/ui/Button';
 import './LibraryScreen.css';
 import { t } from '../utils/translations';
-import { getTodayISO } from '../utils/dateHelpers';
+import { getTodayISO, getValidCompletedDaysCount } from '../utils/dateHelpers';
 import { calculateStreak } from '../hooks/useStreak';
 
 export function LibraryScreen() {
@@ -60,7 +60,8 @@ export function LibraryScreen() {
         availableChallenges.forEach(challenge => {
             const userChallenge = state.challenges?.[challenge.id];
             const totalDays = Number(challenge.durationDays) || Number(challenge.totalDays) || 11;
-            const completedDaysCount = userChallenge ? Object.keys(userChallenge.completedDays || {}).length : 0;
+            const effectiveStartDate = challenge.id === '11_day_intro' ? '2026-05-02' : userChallenge?.startDate;
+            const completedDaysCount = userChallenge ? getValidCompletedDaysCount(userChallenge.completedDays, effectiveStartDate, totalDays) : 0;
             const isCompleted = userChallenge && completedDaysCount >= totalDays;
 
             // Treat cohort challenges with a future startDate as upcoming
@@ -101,12 +102,13 @@ export function LibraryScreen() {
         const userChallenge = state.challenges?.[challenge.id];
         const isJoined = !!userChallenge;
         const totalDays = Number(challenge.durationDays) || Number(challenge.totalDays) || 11;
-        const completedDaysCount = userChallenge ? Object.keys(userChallenge.completedDays || {}).length : 0;
+        const effectiveStartDate = challenge.id === '11_day_intro' ? '2026-05-02' : userChallenge?.startDate;
+        const completedDaysCount = userChallenge ? getValidCompletedDaysCount(userChallenge.completedDays, effectiveStartDate, totalDays) : 0;
         const percentage = Math.min(Math.round((completedDaysCount / totalDays) * 100), 100);
 
         let streak = 0;
         if (isJoined && !isUpcoming) {
-            const streakData = calculateStreak(userChallenge.completedDays || {}, userChallenge.startDate, totalDays);
+            const streakData = calculateStreak(userChallenge.completedDays || {}, effectiveStartDate, totalDays);
             streak = streakData.streak;
         }
 
@@ -150,7 +152,7 @@ export function LibraryScreen() {
                         )}
                         {isJoined && !isUpcoming && challenge.startType === 'rolling' && (
                             <span className="meta-joined">
-                                Joined on: {displayDate(userChallenge.startDate)}
+                                Joined on: {displayDate(effectiveStartDate)}
                             </span>
                         )}
                     </div>
