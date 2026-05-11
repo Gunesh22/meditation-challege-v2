@@ -14,9 +14,14 @@ export function CertificateModal({ isOpen, onClose }) {
         activeChallengeDef,
         availableChallenges,
         totalDays,
+        isChallengeComplete,
         joinSpecificChallenge,
         selectChallenge
     } = useChallengeContext();
+
+    // Safety guard: never show the certificate unless the challenge is genuinely complete.
+    // This prevents stale state or any other code path from accidentally opening the modal.
+    const safeIsOpen = isOpen && isChallengeComplete;
 
     const navigate = useNavigate();
     const certRef = useRef(null);
@@ -130,7 +135,7 @@ export function CertificateModal({ isOpen, onClose }) {
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} className="certificate-modal">
+        <Modal isOpen={safeIsOpen} onClose={onClose} className="certificate-modal">
             <div className="certificate-wrapper" ref={certRef}>
                 <div className="cert-image-container">
                     <img src={certificateImgSrc} alt="Certificate" className="cert-bg-image" />
