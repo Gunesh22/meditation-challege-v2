@@ -85,7 +85,12 @@ export const translations = {
         certCompletion: "Certificate of Completion",
         certDownloaded: "Image downloaded! Text copied to clipboard.",
         certDownloadedNoText: "Image downloaded successfully!",
-        certError: "Sorry, there was an error generating your certificate."
+        certError: "Sorry, there was an error generating your certificate.",
+        certFirstName: "First Name",
+        certLastName: "Last Name",
+        certNameSubmitBtn: "Generate Certificate",
+        certNamePrompt: "Enter your name for the certificate",
+        certNameWarning: "Note: This name will be permanent on your certificate and cannot be changed later."
     },
     hi: {
         greeting: "Happy Thoughts",
@@ -173,7 +178,12 @@ export const translations = {
         certCompletion: "पूर्णता प्रमाणपत्र",
         certDownloaded: "छवि डाउनलोड हो गई! टेक्स्ट क्लिपबोर्ड पर कॉपी हो गया।",
         certDownloadedNoText: "छवि सफलतापूर्वक डाउनलोड हो गई!",
-        certError: "क्षमा करें, आपका प्रमाणपत्र जनरेट करने में कोई त्रुटि हुई।"
+        certError: "क्षमा करें, आपका प्रमाणपत्र जनरेट करने में कोई त्रुटि हुई।",
+        certFirstName: "पहला नाम",
+        certLastName: "अंतिम नाम",
+        certNameSubmitBtn: "प्रमाणपत्र जनरेट करें",
+        certNamePrompt: "प्रमाणपत्र के लिए अपना नाम दर्ज करें",
+        certNameWarning: "नोट: यह नाम आपके प्रमाणपत्र पर स्थायी होगा और इसे बाद में बदला नहीं जा सकता।"
     }
 };
 

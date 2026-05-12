@@ -16,17 +16,26 @@ export function CertificateModal({ isOpen, onClose }) {
         totalDays,
         isChallengeComplete,
         joinSpecificChallenge,
-        selectChallenge
+        selectChallenge,
+        setCertificateName
     } = useChallengeContext();
 
     // Safety guard: never show the certificate unless the challenge is genuinely complete.
-    // This prevents stale state or any other code path from accidentally opening the modal.
-    const safeIsOpen = isOpen && isChallengeComplete;
+    // Allow test account to always see it for design testing.
+    const isTestUser = state?.email === 'testkhoji@tgf.com';
+    const safeIsOpen = isOpen && (isChallengeComplete || isTestUser);
 
     const navigate = useNavigate();
     const certRef = useRef(null);
     const [isSharing, setIsSharing] = useState(false);
     const [certImage, setCertImage] = useState(null); // Preloaded Image object
+
+    // Local state to toggle between prompt and certificate view (for testing)
+    const [isEditingName, setIsEditingName] = useState(!state.certificateName);
+
+    // Local state for name entry
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
 
     // Preload certificate image on mount so it's ready for Canvas export
     useEffect(() => {
@@ -37,9 +46,36 @@ export function CertificateModal({ isOpen, onClose }) {
         img.src = certificateImgSrc;
     }, []);
 
+    // Reset editing state when modal opens
+    useEffect(() => {
+        if (isOpen) {
+            setIsEditingName(!state.certificateName || isTestUser);
+        }
+    }, [isOpen, state.certificateName, isTestUser]);
+
     const nextChallenges = useMemo(() => {
         return availableChallenges.filter(c => c.id !== activeChallengeDef?.id);
     }, [activeChallengeDef, availableChallenges]);
+
+    const formatName = (str) => {
+        if (!str) return '';
+        const trimmed = str.trim();
+        if (!trimmed) return '';
+        return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
+    };
+
+    const handleGenerate = () => {
+        const fName = formatName(firstName);
+        const lName = formatName(lastName);
+        const full = `${fName} ${lName}`.trim();
+        
+        if (fName.length === 0 || lName.length === 0) {
+            // Basic validation: both fields required
+            return;
+        }
+        
+        setCertificateName(full);
+    };
 
     const handleNextChallenge = (challengeId) => {
         const isJoined = !!state.challenges?.[challengeId];
@@ -62,6 +98,15 @@ export function CertificateModal({ isOpen, onClose }) {
             : `🪷 I completed the Tej Gyan Foundation "${challengeName}"!`;
 
         try {
+            // Ensure fonts are loaded before drawing to canvas
+            try {
+                if (document.fonts && document.fonts.load) {
+                    await document.fonts.load('bold 16px Kelvinch');
+                }
+            } catch (fErr) {
+                console.warn('Font loading failed, falling back to system fonts', fErr);
+            }
+
             // Use the preloaded image; if not ready yet, load it now
             let img = certImage;
             if (!img) {
@@ -83,9 +128,20 @@ export function CertificateModal({ isOpen, onClose }) {
             // Draw the certificate background
             ctx.drawImage(img, 0, 0);
 
-            // Draw the user's name — matches CSS: top 27%, centered, 8% of width
-            const userName = state.name || t(language, 'certDefaultName');
-            const fontSize = Math.round(canvas.width * 0.08);
+            // Draw the user's name — matches CSS: top 27%, centered
+            const userName = state.certificateName || t(language, 'certDefaultName');
+            const nameLen = userName.length;
+            
+            // DYNAMIC FONT SIZE: Scale down if name is long
+            // Base size is 8% of width. We start scaling down after 18 characters.
+            let sizeFactor = 0.08;
+            if (nameLen > 18) {
+                sizeFactor = 0.08 * (18 / nameLen);
+                // Minimum size to keep it legible (roughly 4% of width)
+                sizeFactor = Math.max(sizeFactor, 0.04);
+            }
+            
+            const fontSize = Math.round(canvas.width * sizeFactor);
             ctx.font = `bold ${fontSize}px Kelvinch, "Playfair Display", Georgia, serif`;
             ctx.fillStyle = '#542539';
             ctx.textAlign = 'center';
@@ -134,12 +190,75 @@ export function CertificateModal({ isOpen, onClose }) {
         }
     };
 
+    if (!safeIsOpen) return null;
+
+    // STEP 1: Enter Name (if not set OR if editing)
+    if (isEditingName || (!state.certificateName && !isTestUser)) {
+        return (
+            <Modal isOpen={safeIsOpen} onClose={onClose} className="certificate-modal name-entry-modal">
+                <div className="name-prompt-container">
+                    <h3>{t(language, 'certNamePrompt')}</h3>
+                    
+                    <div className="cert-name-warning">
+                        <p>⚠️ {t('en', 'certNameWarning')}</p>
+                        <p style={{ marginTop: '8px', borderTop: '1px solid rgba(212, 175, 55, 0.2)', paddingTop: '8px' }}>
+                            ⚠️ {t('hi', 'certNameWarning')}
+                        </p>
+                    </div>
+
+                    <div className="name-fields">
+                        <div className="field-group">
+                            <label>{t(language, 'certFirstName')}</label>
+                            <input 
+                                type="text" 
+                                value={firstName} 
+                                onChange={(e) => setFirstName(e.target.value)} 
+                                placeholder="e.g. John"
+                                autoFocus
+                            />
+                        </div>
+                        <div className="field-group">
+                            <label>{t(language, 'certLastName')}</label>
+                            <input 
+                                type="text" 
+                                value={lastName} 
+                                onChange={(e) => setLastName(e.target.value)} 
+                                placeholder="e.g. Doe"
+                            />
+                        </div>
+                    </div>
+                    <Button 
+                        variant="primary" 
+                        onClick={() => {
+                            handleGenerate();
+                            setIsEditingName(false);
+                        }} 
+                        className="full-width"
+                        disabled={!firstName.trim() || !lastName.trim()}
+                    >
+                        {t(language, 'certNameSubmitBtn')}
+                    </Button>
+                </div>
+            </Modal>
+        );
+    }
+
+    // STEP 2: View Certificate
     return (
         <Modal isOpen={safeIsOpen} onClose={onClose} className="certificate-modal">
             <div className="certificate-wrapper" ref={certRef}>
                 <div className="cert-image-container">
                     <img src={certificateImgSrc} alt="Certificate" className="cert-bg-image" />
-                    <h3 className="cert-dynamic-name">{state.name || t(language, 'certDefaultName')}</h3>
+                    <h3 
+                        className="cert-dynamic-name"
+                        style={{ 
+                            fontSize: (state.certificateName?.length || 0) > 18 
+                                ? `${8 * (18 / state.certificateName.length)}cqw` 
+                                : '8cqw' 
+                        }}
+                    >
+                        {state.certificateName}
+                    </h3>
                 </div>
             </div>
 

@@ -296,6 +296,12 @@ export function useChallenge() {
         }
     }, [state, activeData, effectiveStartDate, persist, isDayAllowed]);
 
+    // --- Set Certificate Name ---
+    const setCertificateName = useCallback(async (name) => {
+        const next = { ...state, certificateName: name };
+        persist(next);
+    }, [state, persist]);
+
     // --- Reset ---
     const resetChallenge = useCallback(() => {
         clearState();
@@ -326,6 +332,7 @@ export function useChallenge() {
         joinSpecificChallenge,
         selectChallenge,
         completeDay,
+        setCertificateName,
         resetChallenge,
         isDayCompleted,
         isDayAllowed,
